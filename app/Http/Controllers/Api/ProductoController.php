@@ -16,6 +16,10 @@ class ProductoController extends Controller
 
     public function store(Request $request): JsonResponse
     {
+        if (!$request->user()->tokenCan('crear')) {
+            return response()->json(['mensaje' => 'No tienes permiso para crear productos'], 403);
+        }
+
         $validated = $request->validate([
             'nombre' => 'required|string|max:255',
             'descripcion' => 'nullable|string',
@@ -35,6 +39,10 @@ class ProductoController extends Controller
 
     public function update(Request $request, Producto $producto): JsonResponse
     {
+        if (!$request->user()->tokenCan('editar')) {
+            return response()->json(['mensaje' => 'No tienes permiso para editar productos'], 403);
+        }
+
         $validated = $request->validate([
             'nombre' => 'sometimes|string|max:255',
             'descripcion' => 'nullable|string',
@@ -49,6 +57,10 @@ class ProductoController extends Controller
 
     public function destroy(Producto $producto): JsonResponse
     {
+        if (!$request->user()->tokenCan('eliminar')) {
+            return response()->json(['mensaje' => 'No tienes permiso para eliminar productos'], 403);
+        }
+
         $producto->delete();
 
         return response()->json(null, 204);
